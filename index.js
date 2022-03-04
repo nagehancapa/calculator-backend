@@ -101,9 +101,8 @@ app.get("/:id", authMiddleware, async (request, response) => {
     if (isNaN(parseInt(userId))) {
       return response.status(400).send({ message: "User id is not a number" });
     }
-    const { expression, createdAt } = request.body;
 
-    const history = await History.findByPk(parseInt(userId), {
+    const history = await History.findAll({
       where: { userId },
     });
     console.log(history);
@@ -115,6 +114,24 @@ app.get("/:id", authMiddleware, async (request, response) => {
     response.status(200).send({ message: "ok", history });
   } catch (error) {
     console.log(error);
+  }
+});
+
+// post a new expression
+app.post("/", authMiddleware, async (request, response, next) => {
+  try {
+    const { expression } = request.body;
+
+    const history = await History.create({
+      expression,
+      userId: request.user.id,
+    });
+
+    return response
+      .status(201)
+      .send({ message: "new expression recorded", history });
+  } catch (error) {
+    next(error);
   }
 });
 
