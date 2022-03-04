@@ -7,6 +7,7 @@ const loggerMiddleWare = require("morgan");
 const cors = require("cors");
 const { PORT } = require("./config/constants");
 const User = require("./models/").user;
+const History = require("./models").history;
 const bodyParserMiddleWare = express.json();
 const app = express();
 
@@ -90,6 +91,31 @@ app.get("/me", authMiddleware, async (req, res) => {
   // don't send back the password hash
   delete req.user.dataValues["password"];
   res.status(200).json({ ...req.user.dataValues });
+});
+
+// get users expression history
+app.get("/:id", authMiddleware, async (request, response) => {
+  try {
+    const userId = request.params.id;
+
+    if (isNaN(parseInt(userId))) {
+      return response.status(400).send({ message: "User id is not a number" });
+    }
+    const { expression, createdAt } = request.body;
+
+    const history = await History.findByPk(parseInt(userId), {
+      where: { userId },
+    });
+    console.log(history);
+
+    if (history === null) {
+      return response.status(404).send({ message: "No expression history!" });
+    }
+
+    response.status(200).send({ message: "ok", history });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.listen(PORT, () => {
