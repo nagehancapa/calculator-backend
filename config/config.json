@@ -11,7 +11,7 @@
     "dialect": "mysql"
   },
   "production": {
-    "use_env_variable": "DATABASE_URL",
+    "url": "postgres://bkzpbcyq:KuZrqPRIIs69pPW0_FDVh3X_QgPsq4Wq@abul.db.elephantsql.com/bkzpbcyq",
     "dialectOptions": {
       "ssl": {
         "rejectUnauthorized": false
